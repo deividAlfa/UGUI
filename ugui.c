@@ -1384,18 +1384,25 @@ void _UG_SendObjectPostrenderEvent( UG_WINDOW *wnd, UG_OBJECT *obj )
 }
 #endif
 
+/*
+ * Using only bitshifts would save some instruction cycles
+ * but this way the full color space remains (pure 0xFFFFFF)
+ */
 UG_U32 _UG_ConvertRGB565ToRGB888(UG_U16 c)
 {
    UG_U32 r,g,b;
 
    r = (c&0xF800)<<8;
    r += (r+7)>>5;
+   r &= 0xFF0000;
 
    g = (c&0x7E0)<<5;
    g += (g+3)>>6;
+   g &= 0x00FF00;
 
    b = (c&0x1F)<<3;
    b += (b+7)>>5;
+   b &= 0x0000FF;
 
    return (r | g | b);
 }
