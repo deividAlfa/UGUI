@@ -986,9 +986,15 @@ UG_S16 _UG_PutChar( UG_CHAR chr, UG_S16 x, UG_S16 y, UG_COLOR fc, UG_COLOR bc)
        for( i=0;i<actual_char_width;i++ )
        {
          b = *data++;
+#ifdef UGUI_USE_COLOR_RGB888
          color = ((((fc & 0xFF) * b + (bc & 0xFF) * (256 - b)) >> 8) & 0xFF) |            //Blue component
                  ((((fc & 0xFF00) * b + (bc & 0xFF00) * (256 - b)) >> 8)  & 0xFF00) |     //Green component
                  ((((fc & 0xFF0000) * b + (bc & 0xFF0000) * (256 - b)) >> 8) & 0xFF0000); //Red component
+#else
+         color = ((((fc & 0x001F) * b + (bc & 0x1F) * (256 - b)) >> 8) & 0x001F) |        //Blue component
+                 ((((fc & 0x07E0) * b + (bc & 0x07E0) * (256 - b)) >> 8)  & 0x07E0) |     //Green component
+                 ((((fc & 0xF800) * b + (bc & 0xF800) * (256 - b)) >> 8) & 0xF800);       //Red component
+#endif
          if(driver)
          {
            push_pixels(1,color);                                                          // Accelerated output
